@@ -3,10 +3,10 @@ const http = require("http");
 const socketIO = require("socket.io");
 const { NFC } = require("nfc-pcsc");
 const bodyParser = require("body-parser");
-var cors = require("cors");
-
-require("./mongoose")();
-const Absen = require("./model");
+const cors = require("cors");
+const sql = require("./mysql");
+// require("./mongoose")();
+// const Absen = require("./model");
 
 const app = express();
 
@@ -20,15 +20,26 @@ app.get("/", (req, res) => {
 
 app.post("/insert", async (req, res) => {
   const { uid, eid, apikey, apisecret } = req.body;
-  const newAbsen = new Absen({
-    uid,
-    eid,
-    apikey,
-    apisecret,
-  });
+  const kueri = `INSERT INTO absensi.absen
+  (uid, eid, apikey, apisecret)
+  VALUES( '${uid}', '${eid}', '${apikey}', '${apisecret}');`;
 
-  await newAbsen.save();
-  res.send("ok");
+  sql.getConnection((err, con) => {
+    if (err) {
+      con.release();
+      console.log(
+        "Server SIMRS hilang / putus dari jaringan / poweroff mode !"
+      );
+    } else {
+      con.query(kueri, (error, rows, fields) => {
+        if (error) {
+          con.release();
+        } else {
+          res.send("OK");
+        }
+      });
+    }
+  });
 });
 
 const server = http.createServer(app);
@@ -49,5 +60,5 @@ nfc.on("reader", (reader) => {
   });
 });
 
-// process.setMaxListeners(0);
+process.setMaxListeners(0);
 server.listen(5000, () => console.log(`Listening on port 5000`));

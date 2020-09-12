@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
-const mongoURI = "mongodb://168.168.168.124:27017/absensi";
+const mongoURI = "mongodb://168.168.168.110:27017/absensi";
+// const mongoURI = "mongodb://localhost:27017/absensi";
 
 module.exports = () => {
   const mongoTryConnect = function () {
