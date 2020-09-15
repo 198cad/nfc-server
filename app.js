@@ -14,8 +14,16 @@ app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-app.get("/", (req, res) => {
-  res.send({ response: "I am alive" }).status(200);
+app.get("/data", (req, res) => {
+  const murid = [
+    { name: "john doe", age: 45 },
+    { name: "john doe", age: 45 },
+  ];
+  res.send(murid).status(200);
+});
+
+app.get("/get-data/:nama", (req, res) => {
+  res.send(req.params);
 });
 
 app.post("/insert", async (req, res) => {
